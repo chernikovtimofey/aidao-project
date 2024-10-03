@@ -1,0 +1,8 @@
+outs:
+- md5: f76f5af1e15a9bec5e2552128d9724e3
+  size: 6297728
+  hash: md5
+  path: contest-data.npy
+  cloud:
+    my_storage:
+      etag: f76f5af1e15a9bec5e2552128d9724e3

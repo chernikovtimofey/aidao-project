@@ -1,0 +1,6 @@
+[core]
+    remote = my_storage
+['remote "my_storage"']
+    url = s3://aidao-project-data
+    endpointurl = https://storage.yandexcloud.net
+    version_aware = true

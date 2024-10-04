@@ -1,0 +1,117 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python scripts/preprocessing.py ../contest-data.npy
+    deps:
+    - path: ../contest-data.npy
+      hash: md5
+      md5: f76f5af1e15a9bec5e2552128d9724e3
+      size: 6297728
+    - path: scripts/preprocessing.py
+      hash: md5
+      md5: fcab7e967c29b047768fd107f9120557
+      size: 1348
+    params:
+      params.yaml:
+        preprocess.seed: 444
+    outs:
+    - path: transformed-data/corr-data.npy
+      hash: md5
+      md5: c5d53ef0630211096094cebbd9e77c32
+      size: 154921088
+    - path: transformed-data/preprocessed-data.npy
+      hash: md5
+      md5: 7a7978ad3d548a5670b10d1929f5b83e
+      size: 77775488
+  heatmap:
+    cmd: python scripts/heatmap.py transformed-data/corr-data.npy
+    deps:
+    - path: scripts/heatmap.py
+      hash: md5
+      md5: 29e2343243b59a09c92b6cf1d11457ce
+      size: 666
+    - path: transformed-data/corr-data.npy
+      hash: md5
+      md5: c5d53ef0630211096094cebbd9e77c32
+      size: 154921088
+    outs:
+    - path: heatmaps/corr-matrix-0.png
+      hash: md5
+      md5: c232b9d15f2610af46c021b82423bf25
+      size: 361273
+    - path: heatmaps/corr-matrix-1.png
+      hash: md5
+      md5: 7b33dc3c83b1022e9874efbd0a6e25d2
+      size: 356133
+    - path: heatmaps/corr-matrix-10.png
+      hash: md5
+      md5: 9dfa37e98dfd458bd8cce0d67b3fe558
+      size: 356516
+    - path: heatmaps/corr-matrix-11.png
+      hash: md5
+      md5: 85671c4a11fa97736cc2df395e0c5d4c
+      size: 363538
+    - path: heatmaps/corr-matrix-12.png
+      hash: md5
+      md5: 172432a71bc889e44b2712925f90b612
+      size: 353152
+    - path: heatmaps/corr-matrix-13.png
+      hash: md5
+      md5: 3300058412f7fd7fe085801dc02263b2
+      size: 363568
+    - path: heatmaps/corr-matrix-14.png
+      hash: md5
+      md5: 277af39d3e9bd2082bcdf0ee433332d7
+      size: 354270
+    - path: heatmaps/corr-matrix-15.png
+      hash: md5
+      md5: 9ef3bcdc7e4363792f5bf89b179acd44
+      size: 360412
+    - path: heatmaps/corr-matrix-16.png
+      hash: md5
+      md5: fec7ee349a1f1fa3d1e47887aeb42f4c
+      size: 357991
+    - path: heatmaps/corr-matrix-17.png
+      hash: md5
+      md5: 324510eab5b1f3dd0fd95e7730807e36
+      size: 362648
+    - path: heatmaps/corr-matrix-18.png
+      hash: md5
+      md5: 03cedaba27219f9544234422b9f1abe0
+      size: 361830
+    - path: heatmaps/corr-matrix-19.png
+      hash: md5
+      md5: 37353555b36d86d178ecf6f5e4d50b23
+      size: 352545
+    - path: heatmaps/corr-matrix-2.png
+      hash: md5
+      md5: d74a9e2aef3d695c90a6aa27c070e2d4
+      size: 357905
+    - path: heatmaps/corr-matrix-3.png
+      hash: md5
+      md5: 88d9faa583087369502e7e5dcd4b4a17
+      size: 359471
+    - path: heatmaps/corr-matrix-4.png
+      hash: md5
+      md5: 2f9c3f4f45a4640ae8988f4148800fa1
+      size: 362390
+    - path: heatmaps/corr-matrix-5.png
+      hash: md5
+      md5: cbdc239309ccc984cfda8c0fe36d3b28
+      size: 358323
+    - path: heatmaps/corr-matrix-6.png
+      hash: md5
+      md5: 732f0c27eeebb0ccd6a341407c1ad984
+      size: 359087
+    - path: heatmaps/corr-matrix-7.png
+      hash: md5
+      md5: 23427918490311d6da065b97d2428e66
+      size: 364917
+    - path: heatmaps/corr-matrix-8.png
+      hash: md5
+      md5: b91d54ffd5d29c7b99a80869ceccc7ab
+      size: 365483
+    - path: heatmaps/corr-matrix-9.png
+      hash: md5
+      md5: 953129b62538b40411503cad2aa55133
+      size: 360563

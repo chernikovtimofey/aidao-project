@@ -19,36 +19,36 @@ stages:
         autoencoder.eps: 1e-08
         autoencoder.hid1_dim: 1000
         autoencoder.hid2_dim: 500
-        autoencoder.lr: 0.0001
-        autoencoder.num_epochs: 10
-        autoencoder.out_dim: 20
+        autoencoder.lr: 0.001
+        autoencoder.num_epochs: 50
+        autoencoder.out_dim: 50
         autoencoder.weight_decay: 0
     outs:
     - path: encoded_data.npy
       hash: md5
-      md5: 39dd7236adf575220b93a2f87aa7cf9d
-      size: 25728
+      md5: c16dbe347089bbb1c22e6f0178380aeb
+      size: 64128
       cloud:
         my_storage:
-          etag: 39dd7236adf575220b93a2f87aa7cf9d
-          version_id: 000623B8F43939EA
+          etag: c16dbe347089bbb1c22e6f0178380aeb
+          version_id: 000623BE9CDF7F27
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
     - path: encoded_data.npy
       hash: md5
-      md5: 39dd7236adf575220b93a2f87aa7cf9d
-      size: 25728
+      md5: c16dbe347089bbb1c22e6f0178380aeb
+      size: 64128
     - path: src/clusterizer.py
       hash: md5
-      md5: 324d4ddd9850f0bf1f84afe6c6414cad
-      size: 1042
+      md5: f789e796f6197d4ff44369990d19653b
+      size: 1091
     outs:
     - path: submission.csv
       hash: md5
-      md5: 837dec84a87e79d3e2b10e386ed05956
+      md5: b75424f09241dcb429fb5876087cfbb0
       size: 1132
       cloud:
         my_storage:
-          etag: 837dec84a87e79d3e2b10e386ed05956
-          version_id: 000623B8F4388148
+          etag: b75424f09241dcb429fb5876087cfbb0
+          version_id: 000623BE9CDEB09A

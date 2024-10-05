@@ -1,4 +1,5 @@
 import os
+os.environ["OMP_NUM_THREADS"] = '1'
 import numpy as np
 from sklearn.cluster import KMeans
 
@@ -8,7 +9,7 @@ def clusterize():
     data = np.load(os.path.join(file_dir, '../encoded_data.npy'))   
 
     # clusterize
-    clusterizer = KMeans(n_clusters=20)
+    clusterizer = KMeans(n_clusters=20, n_init=1000)
     cluster_distances = clusterizer.fit_transform(data)
     
     # make predictions

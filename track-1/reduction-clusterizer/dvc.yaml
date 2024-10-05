@@ -1,0 +1,26 @@
+stages:
+  autoencoder:
+    cmd: python src/autoencoder.py src/FCDataset.py
+    deps:
+    - src/autoencoder.py
+    - src/FCDataset.py
+    params:
+    - FCDataset.seed
+    - autoencoder.hid1_dim
+    - autoencoder.hid2_dim
+    - autoencoder.out_dim
+    - autoencoder.lr
+    - autoencoder.beta1
+    - autoencoder.beta2
+    - autoencoder.eps
+    - autoencoder.weight_decay
+    - autoencoder.num_epochs
+    outs:
+    - encoded_data.npy
+  clusterizer:
+    cmd: python src/clusterizer.py encoded_data.npy
+    deps:
+    - src/clusterizer.py
+    - encoded_data.npy
+    outs:
+    - submission.csv

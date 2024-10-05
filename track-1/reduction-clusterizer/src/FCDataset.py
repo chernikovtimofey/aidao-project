@@ -31,7 +31,7 @@ class FCDataset(Dataset):
         for i in range(num_obj):
             self.data[i] = np.corrcoef(data[i], rowvar=False)[np.triu_indices(num_rois)].flatten()
 
-        self.data = torch.from_numpy(self.data)
+        self.data = torch.from_numpy(self.data).to(torch.float32)
 
     def __len__(self):
         return self.data.shape[0]

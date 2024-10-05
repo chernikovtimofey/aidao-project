@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  autoencoder:
+    cmd: python src/autoencoder.py src/FCDataset.py
+    deps:
+    - path: src/FCDataset.py
+      hash: md5
+      md5: 75f31bb05b2e203a36cad765e18ccb49
+      size: 2304
+    - path: src/autoencoder.py
+      hash: md5
+      md5: 73bcb02e3c52f1926c16de1e48752dad
+      size: 3790
+    params:
+      params.yaml:
+        FCDataset.seed: 444
+        autoencoder.beta1: 0.9
+        autoencoder.beta2: 0.999
+        autoencoder.eps: 1e-08
+        autoencoder.hid1_dim: 1000
+        autoencoder.hid2_dim: 500
+        autoencoder.lr: 0.0001
+        autoencoder.num_epochs: 500
+        autoencoder.out_dim: 20
+        autoencoder.weight_decay: 1e-05
+    outs:
+    - path: encoded_data.npy
+      hash: md5
+      md5: 34e886c9263696e9229a3e96b3be493c
+      size: 25728
+  clusterizer:
+    cmd: python src/clusterizer.py encoded_data.npy
+    deps:
+    - path: encoded_data.npy
+      hash: md5
+      md5: 34e886c9263696e9229a3e96b3be493c
+      size: 25728
+    - path: src/clusterizer.py
+      hash: md5
+      md5: 51a0490a8161cb4bb41330084aeebbb7
+      size: 1061
+    outs:
+    - path: submission.csv
+      hash: md5
+      md5: 059dfa604ca18797995ffd7d4e894191
+      size: 1132

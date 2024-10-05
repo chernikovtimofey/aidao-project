@@ -28,6 +28,10 @@ stages:
       hash: md5
       md5: 34e886c9263696e9229a3e96b3be493c
       size: 25728
+      cloud:
+        my_storage:
+          etag: 34e886c9263696e9229a3e96b3be493c
+          version_id: 000623B5FDB9BA7E
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
@@ -44,3 +48,7 @@ stages:
       hash: md5
       md5: 059dfa604ca18797995ffd7d4e894191
       size: 1132
+      cloud:
+        my_storage:
+          etag: 059dfa604ca18797995ffd7d4e894191
+          version_id: 000623B5FDBA52E2

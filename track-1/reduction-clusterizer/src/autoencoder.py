@@ -4,7 +4,7 @@ import dvc.api
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torch.utils.data import random_split
+from dvclive import Live
 from FCDataset import FCDataset
 
 class Encoder(nn.Module):
@@ -93,9 +93,6 @@ def encode():
     file_dir = os.path.dirname(__file__)
     dataset = FCDataset(os.path.join(file_dir, '../../contest-data.npy'), seed=seed)
     loader = DataLoader(dataset, batch_size=128, shuffle=True)
-    # train_data, test_data = random_split(dataset, [0.8, 0.2], torch.Generator().manual_seed(seed))
-    # train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-    # test_loader = DataLoader(test_data, batch_size=64, shuffle=True)
 
     # initialize autoencoder
     inp_dim = dataset.data.shape[1]
@@ -106,14 +103,14 @@ def encode():
                                  eps=eps, weight_decay=weight_decay)
     
     # train autoencoder
-    for epoch in range(num_epochs):
-        loss = train_loop(loader, ae, loss_fn, optimizer)
-        print(f'epoch {epoch + 1} loss: {loss}')
-        # train_loss = train_loop(train_loader, ae, loss_fn, optimizer)
-        # test_loss = test_loop(test_loader, ae, loss_fn)
-        # print(f'epoch {epoch + 1}: train loss {train_loss}, test loss {test_loss}')
+    with Live() as live:
+        for epoch in range(num_epochs):
+            loss = train_loop(loader, ae, loss_fn, optimizer)
 
-    np.save(os.path.join(file_dir, '../encoded_data.npy'), ae.encoder(dataset.data).detach().numpy())
+            live.log_metric('loss', loss)
+            live.next_step()
+
+        np.save(os.path.join(file_dir, '../encoded_data.npy'), ae.encoder(dataset.data).detach().numpy())
 
 if __name__ == '__main__':
     encode()

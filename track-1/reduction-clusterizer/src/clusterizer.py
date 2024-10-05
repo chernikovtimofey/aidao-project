@@ -23,7 +23,6 @@ def clusterize():
             leftover_indexes = np.delete(leftover_indexes, top16)
         else:
             preds[leftover_indexes] = i
-            break
 
     np.savetxt(os.path.join(file_dir, '../submission.csv'), preds, fmt='%i', header='prediction', comments='')
 

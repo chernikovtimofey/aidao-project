@@ -24,3 +24,8 @@ stages:
     - encoded_data.npy
     outs:
     - submission.csv
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step

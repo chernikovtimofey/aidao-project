@@ -4,6 +4,7 @@ import dvc.api
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from torch.utils.data import random_split
 from dvclive import Live
 from FCDataset import FCDataset
 
@@ -92,7 +93,9 @@ def encode():
     # extract the data
     file_dir = os.path.dirname(__file__)
     dataset = FCDataset(os.path.join(file_dir, '../../contest-data.npy'), seed=seed)
-    loader = DataLoader(dataset, batch_size=128, shuffle=True)
+    train_dataset, test_dataset = random_split(dataset, [0.8, 0.2], torch.Generator().manual_seed(seed))
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
 
     # initialize autoencoder
     inp_dim = dataset.data.shape[1]
@@ -105,9 +108,11 @@ def encode():
     # train autoencoder
     with Live() as live:
         for epoch in range(num_epochs):
-            loss = train_loop(loader, ae, loss_fn, optimizer)
+            train_loss = train_loop(train_loader, ae, loss_fn, optimizer)
+            test_loss = test_loop(test_loader, ae, loss_fn)
 
-            live.log_metric('loss', loss)
+            live.log_metric('train_loss', train_loss)
+            live.log_metric('test_loss', test_loss)
             live.next_step()
 
         np.save(os.path.join(file_dir, '../encoded_data.npy'), ae.encoder(dataset.data).detach().numpy())

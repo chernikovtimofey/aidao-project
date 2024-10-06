@@ -5,12 +5,12 @@ stages:
     deps:
     - path: src/FCDataset.py
       hash: md5
-      md5: 75f31bb05b2e203a36cad765e18ccb49
-      size: 2304
+      md5: 9b4210b95f552c7069d71f341adab1ce
+      size: 2235
     - path: src/autoencoder.py
       hash: md5
-      md5: 46d2925049217b1da2546a046637b8df
-      size: 3742
+      md5: ccc3b1ded805ef89391f868383050eaa
+      size: 3622
     params:
       params.yaml:
         FCDataset.seed: 444
@@ -21,34 +21,34 @@ stages:
         autoencoder.hid2_dim: 300
         autoencoder.lr: 0.001
         autoencoder.num_epochs: 100
-        autoencoder.out_dim: 10
+        autoencoder.out_dim: 20
         autoencoder.weight_decay: 0
     outs:
     - path: encoded_data.npy
       hash: md5
-      md5: 821ee47c01c146496bd9e7ed76df7ee3
-      size: 12928
+      md5: d67790c41bdd43c170f6e6fdde049079
+      size: 25728
       cloud:
         my_storage:
-          etag: 821ee47c01c146496bd9e7ed76df7ee3
-          version_id: 000623CB9E998745
+          etag: d67790c41bdd43c170f6e6fdde049079
+          version_id: 000623D1E7AED822
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
     - path: encoded_data.npy
       hash: md5
-      md5: 821ee47c01c146496bd9e7ed76df7ee3
-      size: 12928
+      md5: d67790c41bdd43c170f6e6fdde049079
+      size: 25728
     - path: src/clusterizer.py
       hash: md5
-      md5: 9b932445c9f865afdc00fe29e44e11b9
-      size: 1092
+      md5: e9c28dde18e505855f42ef70b7bf01ce
+      size: 1062
     outs:
     - path: submission.csv
       hash: md5
-      md5: ee45db4a6cf4b9d80b2e4ce3477ce25d
-      size: 1132
+      md5: c2f34f7ccb34bb440084e4523d324699
+      size: 811
       cloud:
         my_storage:
-          etag: ee45db4a6cf4b9d80b2e4ce3477ce25d
-          version_id: 000623CB9E98A28D
+          etag: c2f34f7ccb34bb440084e4523d324699
+          version_id: 000623D1E7BA6393

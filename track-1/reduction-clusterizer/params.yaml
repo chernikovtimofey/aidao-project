@@ -1,12 +1,12 @@
 FCDataset:
   seed: 444
 autoencoder:
-  hid1_dim: 300
-  hid2_dim: 300
-  out_dim: 50
+  hid1_dim: 500
+  hid2_dim: 500
+  out_dim: 300
   lr: 0.001
   beta1: 0.9
   beta2: 0.999
   eps: 0.00000001
   weight_decay: 0
-  num_epochs: 100
+  num_epochs: 500

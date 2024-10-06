@@ -1,0 +1,39 @@
+outs:
+- hash: md5
+  path: contest-data
+  files:
+  - relpath: bnu.csv
+    md5: 586df5c6b6c92e781175422921eb60fc
+    size: 574
+    cloud:
+      my_storage:
+        etag: 586df5c6b6c92e781175422921eb60fc
+        version_id: 000623D1E7BC1E36
+  - relpath: bnu1.npy
+    md5: 8b87a6ec4e57787ff6deae32eb208201
+    size: 57118208
+    cloud:
+      my_storage:
+        etag: 8b87a6ec4e57787ff6deae32eb208201
+        version_id: 000623D1E8777223
+  - relpath: bnu2.npy
+    md5: d6111846c81520de91f78e73bdfe6e52
+    size: 57118208
+    cloud:
+      my_storage:
+        etag: d6111846c81520de91f78e73bdfe6e52
+        version_id: 000623D1E8802E1F
+  - relpath: ihb.csv
+    md5: 62f19bede2dd4693a9e0707b9a1cfd41
+    size: 86
+    cloud:
+      my_storage:
+        etag: 62f19bede2dd4693a9e0707b9a1cfd41
+        version_id: 000623D1E7BC7589
+  - relpath: ihb.npy
+    md5: e40264a91ec851a08980285c189d37a9
+    size: 8044928
+    cloud:
+      my_storage:
+        etag: e40264a91ec851a08980285c189d37a9
+        version_id: 000623D1E7D95838

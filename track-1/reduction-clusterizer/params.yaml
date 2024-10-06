@@ -3,7 +3,7 @@ FCDataset:
 autoencoder:
   hid1_dim: 300
   hid2_dim: 300
-  out_dim: 50
+  out_dim: 30
   lr: 0.001
   beta1: 0.9
   beta2: 0.999

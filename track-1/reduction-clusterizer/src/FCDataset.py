@@ -11,7 +11,7 @@ class FCDataset(Dataset):
         np.random.seed(seed)
 
         self.transform = transform
-        self.seed = 0
+        self.seed = seed
 
         # preprocess data
         data = np.load(file_path)
@@ -29,7 +29,7 @@ class FCDataset(Dataset):
         # convert time series to FC
         self.data = np.empty((num_obj, (1 + num_rois) * num_rois // 2))
         for i in range(num_obj):
-            self.data[i] = np.corrcoef(data[i], rowvar=False)[np.triu_indices(num_rois)].flatten()
+            self.data[i] = np.corrcoef(data[i], rowvar=False)[np.triu_indices(num_rois)]
 
         self.data = torch.from_numpy(self.data).to(torch.float32)
 

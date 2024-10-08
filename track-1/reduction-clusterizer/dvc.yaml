@@ -2,30 +2,37 @@ stages:
   autoencoder:
     cmd: python src/autoencoder.py src/FCDataset.py
     deps:
-    - src/autoencoder.py
     - src/FCDataset.py
+    - src/autoencoder.py
     params:
-    - FCDataset.seed
-    - autoencoder.hid1_dim
-    - autoencoder.hid2_dim
-    - autoencoder.out_dim
-    - autoencoder.lr
-    - autoencoder.beta1
-    - autoencoder.beta2
-    - autoencoder.eps
-    - autoencoder.weight_decay
-    - autoencoder.num_epochs
+    - architecture.hid1_dim
+    - architecture.hid2_dim
+    - architecture.out_dim
+    - architecture.p
+    - optimizer.beta1
+    - optimizer.beta2
+    - optimizer.eps
+    - optimizer.lr
+    - optimizer.num_epochs
+    - optimizer.weight_decay
+    - seed
     outs:
     - encoded_data.npy
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
-    - src/clusterizer.py
     - encoded_data.npy
+    - src/clusterizer.py
     outs:
     - submission.csv
+
+artifacts:
+  autoencoder:
+    path: model.pd
+    type: model
 metrics:
 - dvclive/metrics.json
 plots:
-- dvclive/plots/metrics:
+- plots/metrics.csv:
     x: step
+    y: train_loss test_loss

@@ -2,3 +2,4 @@
 /encoded_data.npy
 /submission.csv
 src/__pycache__
+/model.pd

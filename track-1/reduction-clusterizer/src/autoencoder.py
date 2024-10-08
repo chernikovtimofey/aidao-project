@@ -1,4 +1,5 @@
 import os
+import csv
 import numpy as np
 import dvc.api
 import torch
@@ -9,13 +10,16 @@ from dvclive import Live
 from FCDataset import FCDataset
 
 class Encoder(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim):
+    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, seed=None, p=0.5):
         super().__init__()
+        np.random.seed(seed)
         self.encoder = nn.Sequential(
             nn.Linear(inp_dim, hid1_dim),
             nn.ReLU(),
+            nn.Dropout(p=p),
             nn.Linear(hid1_dim, hid2_dim),
             nn.ReLU(),
+            nn.Dropout(p=p),
             nn.Linear(hid2_dim, out_dim)
         )
 
@@ -23,12 +27,15 @@ class Encoder(nn.Module):
         return self.encoder(x)
     
 class Decoder(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim):
+    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, seed=None, p=0.5):
         super().__init__()
+        np.random.seed(seed)
         self.decoder = nn.Sequential(
             nn.Linear(out_dim, hid2_dim),
+            nn.Dropout(p=p),
             nn.ReLU(),
             nn.Linear(hid2_dim, hid1_dim),
+            nn.Dropout(p=p),
             nn.ReLU(),
             nn.Linear(hid1_dim, inp_dim)
         )
@@ -37,18 +44,17 @@ class Decoder(nn.Module):
         return self.decoder(x)
     
 class AE(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim):
+    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, seed=None, p=0.5):
         super().__init__()
-        self.encoder = Encoder(inp_dim, hid1_dim, hid2_dim, out_dim)
-        self.decoder = Decoder(inp_dim, hid1_dim, hid2_dim, out_dim)
+        self.encoder = Encoder(inp_dim, hid1_dim, hid2_dim, out_dim, seed, p)
+        self.decoder = Decoder(inp_dim, hid1_dim, hid2_dim, out_dim, seed, p)
 
     def forward(self, x):
         return self.decoder(self.encoder(x))
     
-def train_loop(dataloader, model, loss_fn, optimizer):
+def train_epoch(dataloader, model, loss_fn, optimizer):
     model.train()
 
-    loss = None
     for x in dataloader:
         # compute loss
         pred = model(x)
@@ -59,61 +65,64 @@ def train_loop(dataloader, model, loss_fn, optimizer):
         optimizer.step()
         optimizer.zero_grad()
 
-    return loss.item()
-
-def test_loop(dataloader, model, loss_fn):
+def evaluate(dataset, model, loss_fn):
     model.eval()
+    x = next(iter(DataLoader(dataset, len(dataset))))
 
-    loss = 0
-    for x in dataloader:
-        # compute loss
-        pred = model(x)
-        loss += loss_fn(pred, x).item()
-    
-    loss /= len(dataloader)
-    return loss 
+    pred = model(x)
+    loss = loss_fn(pred, x).item()
+
+    return loss
     
 
 def encode():
-    # extract params
-    fc_params = dvc.api.params_show()['FCDataset']
-    seed = fc_params['seed']
-
-    ae_params = dvc.api.params_show()['autoencoder'] 
-    hid1_dim = ae_params['hid1_dim']
-    hid2_dim = ae_params['hid2_dim']
-    out_dim = ae_params['out_dim']
-    lr = ae_params['lr']
-    beta1 = ae_params['beta1']
-    beta2 = ae_params['beta2']
-    eps = ae_params['eps']
-    weight_decay = ae_params['weight_decay']
-    num_epochs = ae_params['num_epochs']
+    params = dvc.api.params_show()
 
     # extract the data
     file_dir = os.path.dirname(__file__)
-    dataset = FCDataset(os.path.join(file_dir, '../../contest-data.npy'), seed=seed)
-    train_dataset, test_dataset = random_split(dataset, [0.8, 0.2], torch.Generator().manual_seed(seed))
-    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
+    dataset = FCDataset(os.path.join(file_dir, '../../contest-data.npy'), seed=params['seed'])
+    train_dataset, test_dataset = random_split(dataset, [0.8, 0.2], torch.Generator().manual_seed(params['seed']))
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 
     # initialize autoencoder
     inp_dim = dataset.data.shape[1]
-    ae = AE(inp_dim, hid1_dim, hid2_dim, out_dim)
+    ae = AE(inp_dim, 
+            params['architecture']['hid1_dim'], 
+            params['architecture']['hid2_dim'], 
+            params['architecture']['out_dim'], 
+            seed=params['seed'], p=params['architecture']['p'])
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam(ae.parameters(), 
-                                 lr=lr, betas=(beta1, beta2),
-                                 eps=eps, weight_decay=weight_decay)
+                                 lr=params['optimizer']['lr'], 
+                                 betas=(params['optimizer']['beta1'], params['optimizer']['beta2']),
+                                 eps=params['optimizer']['eps'], 
+                                 weight_decay=params['optimizer']['weight_decay'])
     
     # train autoencoder
-    with Live() as live:
-        for epoch in range(num_epochs):
-            train_loss = train_loop(train_loader, ae, loss_fn, optimizer)
-            test_loss = test_loop(test_loader, ae, loss_fn)
+    with Live() as live, \
+    open(os.path.join(file_dir, '../plots/metrics.csv'), 'w+') as metrics_file:
+        metrics_writer = csv.writer(metrics_file)
+        metrics_writer.writerow(['step', 'train_loss', 'test_loss'])
 
-            live.log_metric('train_loss', train_loss)
-            live.log_metric('test_loss', test_loss)
-            live.next_step()
+        for epoch in range(params['optimizer']['num_epochs']):
+            train_epoch(train_loader, ae, loss_fn, optimizer)
+            
+            # get metrics
+            train_loss = evaluate(train_dataset, ae, loss_fn)
+            test_loss = evaluate(test_dataset, ae, loss_fn)
+
+            # log metrics
+            live.log_metric('train/loss', train_loss, plot=False)
+            live.log_metric('test/loss', test_loss, plot=False)
+
+            # write metrics
+            metrics_writer.writerow([live.step, train_loss, test_loss])
+
+            live.next_step()            
+
+        # log model
+        torch.save(ae.state_dict(), os.path.join(file_dir, '../model.pd'))
+        live.log_artifact(os.path.join(file_dir, '../model.pd'), type='model', name='autoencoder')
 
         np.save(os.path.join(file_dir, '../encoded_data.npy'), ae.encoder(dataset.data).detach().numpy())
 

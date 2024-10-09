@@ -1,0 +1,41 @@
+schema: '2.0'
+stages:
+  ConvNet:
+    cmd: python src/ConvNet.py src/Datasets.py
+    deps:
+    - path: src/ConvNet.py
+      hash: md5
+      md5: 9c59d39784a3d7055862bd62f0e7b4d0
+      size: 7292
+    - path: src/Datasets.py
+      hash: md5
+      md5: 9a25424f32a94de426eb4ea2694dcb47
+      size: 3157
+    params:
+      params.yaml:
+        net_architecture:
+          conv1_params:
+            out_channels: 8
+            kernel_size: 11
+            stride: 5
+            padding: 1
+          conv2_params:
+            out_channels: 16
+            kernel_size: 5
+            stride: 2
+            padding: 0
+          drop_prob: 0
+        net_optimizer:
+          lr: 1e-06
+          beta1: 0.9
+          beta2: 0.999
+          eps: 1e-08
+          weight_decay: 0
+          num_epochs: 5
+        net_seed: 333
+        net_threshold: 0.5
+    outs:
+    - path: model.pd
+      hash: md5
+      md5: 0c1061442738a9b7a75ace905908e574
+      size: 121652

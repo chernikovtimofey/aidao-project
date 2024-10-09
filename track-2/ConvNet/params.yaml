@@ -1,0 +1,21 @@
+net_seed: 333
+net_architecture:
+  conv1_params:
+    out_channels: 8
+    kernel_size: 11
+    stride: 5
+    padding: 1
+  conv2_params:
+    out_channels: 16
+    kernel_size: 5
+    stride: 2
+    padding: 0
+  drop_prob: 0
+net_optimizer:
+  lr: 0.000001
+  beta1: 0.9
+  beta2: 0.999
+  eps: 0.00000001
+  weight_decay: 0
+  num_epochs: 5
+net_threshold: 0.5

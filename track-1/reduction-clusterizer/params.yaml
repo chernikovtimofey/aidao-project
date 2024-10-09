@@ -1,13 +1,14 @@
 seed: 444
 architecture:
-  hid1_dim: 150
-  hid2_dim: 150
-  out_dim: 40
-  p: 0.3
+  hid1_dim: 1000
+  hid2_dim: 1000
+  out_dim: 10
+  p: 0.5
 optimizer:
   lr: 0.001
   beta1: 0.9
   beta2: 0.999
   eps: 0.00000001
-  weight_decay: 0.000001
-  num_epochs: 5
+  weight_decay: 0.0000001
+  num_epochs: 1
+

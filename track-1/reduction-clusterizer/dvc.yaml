@@ -30,9 +30,9 @@ artifacts:
   autoencoder:
     path: model.pd
     type: model
-metrics:
-- dvclive/metrics.json
 plots:
 - plots/metrics.csv:
     x: step
-    y: train_loss test_loss
+    y: [train_loss, test_loss]
+metrics:
+- dvclive/metrics.json

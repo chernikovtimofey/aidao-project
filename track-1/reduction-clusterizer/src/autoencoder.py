@@ -99,6 +99,9 @@ def encode():
                                  weight_decay=params['optimizer']['weight_decay'])
     
     # train autoencoder
+    if not os.path.exists(os.path.join(file_dir, '../plots')):
+        os.makedirs(os.path.join(file_dir, '../plots'))
+
     with Live() as live, \
     open(os.path.join(file_dir, '../plots/metrics.csv'), 'w+') as metrics_file:
         metrics_writer = csv.writer(metrics_file)
@@ -124,6 +127,7 @@ def encode():
         torch.save(ae.state_dict(), os.path.join(file_dir, '../model.pd'))
         live.log_artifact(os.path.join(file_dir, '../model.pd'), type='model', name='autoencoder')
 
+        ae.encoder.eval()
         np.save(os.path.join(file_dir, '../encoded_data.npy'), ae.encoder(dataset.data).detach().numpy())
 
 if __name__ == '__main__':

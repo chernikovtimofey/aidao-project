@@ -3,6 +3,7 @@ import csv
 import sklearn.metrics
 import dvc.api
 import torch
+import torch.nn.init   
 from torch import nn
 from torch.nn import BCEWithLogitsLoss
 from torch.utils.data import DataLoader
@@ -12,20 +13,35 @@ from dvclive import Live
 from Datasets import BnuDataset
 from Datasets import IhbDataset
 
+def weight_init(m):
+    if isinstance(m, nn.LazyConv2d) or isinstance(m, nn.LazyLinear):
+        torch.nn.init.xavier_uniform_(m.weight)
+        torch.nn.init.zero(m.bias)
+        
+
 class ConvNet(nn.Module):
     def __init__(self, conv1_params, conv2_params, drop_prob):
         super().__init__()
 
+        lin_dim = \
+        (419 + 2 * conv1_params['padding'] - conv1_params['kernel_size'] + 1) // conv1_params['stride']
+        lin_dim = \
+        (lin_dim + 2 * conv2_params['padding'] - conv2_params['kernel_size'] + 1) // conv2_params['stride']
+        lin_dim = conv2_params['out_channels'] * lin_dim**2
+
         self.net = nn.Sequential(
-            nn.LazyConv2d(**conv1_params),
+            nn.Conv2d(1, **conv1_params),
             nn.ReLU(),
+            nn.LazyBatchNorm2d(),
             nn.Dropout(drop_prob),
-            nn.LazyConv2d(**conv2_params),
+            nn.Conv2d(conv1_params['out_channels'], **conv2_params),
             nn.ReLU(),
+            nn.LazyBatchNorm2d(),
             nn.Dropout(drop_prob),
             nn.Flatten(),
-            nn.LazyLinear(1)
+            nn.Linear(lin_dim, 1)
         )
+        self.net.apply(weight_init)
     
     def forward(self, x):
         return self.net(x)
@@ -79,6 +95,7 @@ def train():
 
     # initialize ConvNet
     net = ConvNet(**params['net_architecture'])
+
     loss_fn = BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(net.parameters(),
                                  lr=params['net_optimizer']['lr'],
@@ -115,7 +132,7 @@ def train():
             train_metrics, actual, train_pred, train_fpr, train_tpr = \
                 evaluate(train_dataset, net, loss_fn, params['net_threshold'])
             test_metrics, actual, test_pred, test_fpr, test_tpr = \
-                evaluate(train_dataset, net, loss_fn, params['net_threshold'])
+                evaluate(test_dataset, net, loss_fn, params['net_threshold'])
             
             # log metrics
             for metric, value in train_metrics.items():

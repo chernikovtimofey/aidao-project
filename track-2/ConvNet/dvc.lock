@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/ConvNet.py
       hash: md5
-      md5: 9c59d39784a3d7055862bd62f0e7b4d0
-      size: 7292
+      md5: b7bf5990de61bd951ecc4bdd5ce7c0f2
+      size: 7945
     - path: src/Datasets.py
       hash: md5
       md5: 9a25424f32a94de426eb4ea2694dcb47
@@ -18,24 +18,19 @@ stages:
             out_channels: 8
             kernel_size: 11
             stride: 5
-            padding: 1
+            padding: 3
           conv2_params:
             out_channels: 16
             kernel_size: 5
-            stride: 2
-            padding: 0
+            stride: 3
+            padding: 1
           drop_prob: 0
         net_optimizer:
-          lr: 1e-06
+          lr: 0.0001
           beta1: 0.9
           beta2: 0.999
           eps: 1e-08
           weight_decay: 0
-          num_epochs: 5
+          num_epochs: 50
         net_seed: 333
         net_threshold: 0.5
-    outs:
-    - path: model.pd
-      hash: md5
-      md5: 0c1061442738a9b7a75ace905908e574
-      size: 121652

@@ -9,8 +9,6 @@ stages:
     - net_architecture
     - net_optimizer
     - net_threshold
-    outs:
-    - model.pd
 plots:
 - plots/loss.csv:
     x: step
@@ -24,7 +22,7 @@ plots:
     x: step
     y: [train_precision, test_precision]
     title: Precision
-- plots/recall:
+- plots/recall.csv:
     x: step
     y: [train_recall, test_recall]
     title: Recall
@@ -56,9 +54,9 @@ plots:
     x: fp
     y: tp
     title: ROC for test set
-metrics:
-- dvclive/metrics.json
 artifacts:
   ConvNet:
     path: model.pd
     type: model
+metrics:
+- dvclive/metrics.json

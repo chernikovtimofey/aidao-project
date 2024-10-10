@@ -5,51 +5,49 @@ stages:
     deps:
     - path: src/FCDataset.py
       hash: md5
-      md5: 5af6a8fe45afe6fd358c337142fdfad4
-      size: 2228
+      md5: 3e88781651aabe7aa6047d97b9a7a64d
+      size: 2312
     - path: src/autoencoder.py
       hash: md5
-      md5: 33a4074a3c5e6a4ee9e30ab616ecc368
-      size: 4487
+      md5: 3ef996ff1adc46268419382b5d7fec12
+      size: 4499
     params:
       params.yaml:
-        architecture.hid1_dim: 1000
-        architecture.hid2_dim: 1000
-        architecture.out_dim: 10
-        architecture.p: 0.5
-        optimizer.beta1: 0.9
-        optimizer.beta2: 0.999
-        optimizer.eps: 1e-08
-        optimizer.lr: 0.001
-        optimizer.num_epochs: 1
-        optimizer.weight_decay: 1e-07
-        seed: 444
+        autoencoder:
+          seed: 444
+          architecture:
+            hid1_dim: 1000
+            hid2_dim: 1000
+            out_dim: 10
+            drop_prob: 0.5
+          optimizer:
+            lr: 0.001
+            beta1: 0.9
+            beta2: 0.999
+            eps: 1e-08
+            weight_decay: 1e-07
+          num_epochs: 2
     outs:
     - path: encoded_data.npy
       hash: md5
-      md5: 4018bac0f55d612145de2246dfb9c794
+      md5: 42d6753d1ebb20c5de3e0a4efcd73a8e
       size: 12928
-      cloud:
-        my_storage:
-          etag: 4018bac0f55d612145de2246dfb9c794
-          version_id: 0006240DBBAD833D
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
     - path: encoded_data.npy
       hash: md5
-      md5: 4018bac0f55d612145de2246dfb9c794
+      md5: 42d6753d1ebb20c5de3e0a4efcd73a8e
       size: 12928
     - path: src/clusterizer.py
       hash: md5
-      md5: e9c28dde18e505855f42ef70b7bf01ce
-      size: 1062
+      md5: cb4c2e04e2646883ec1c5ad42cbc23e9
+      size: 1148
+    params:
+      params.yaml:
+        autoencoder.seed: 444
     outs:
     - path: submission.csv
       hash: md5
-      md5: 73ecaedd23a257d97d951a550e50645d
+      md5: ff826dcd2835b6ea6b6a6b0fb72959b4
       size: 811
-      cloud:
-        my_storage:
-          etag: 73ecaedd23a257d97d951a550e50645d
-          version_id: 0006240DBBAD749D

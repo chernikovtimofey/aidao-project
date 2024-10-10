@@ -1,15 +1,18 @@
 import os
-os.environ["OMP_NUM_THREADS"] = '1'
 import numpy as np
+import dvc.api
 from sklearn.cluster import KMeans
 
 def clusterize():
+    os.environ["OMP_NUM_THREADS"] = '1'
+    params = dvc.api.params_show()
+
     # extract the data
     file_dir = os.path.dirname(__file__)
     data = np.load(os.path.join(file_dir, '../encoded_data.npy'))   
 
     # clusterize
-    clusterizer = KMeans(n_clusters=20, n_init=1000)
+    clusterizer = KMeans(n_clusters=20, random_state=params['autoencoder']['seed'])
     cluster_distances = clusterizer.fit_transform(data)
     
     # make predictions

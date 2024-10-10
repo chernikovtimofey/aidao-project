@@ -1,17 +1,14 @@
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 import torch
+import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import StandardScaler
 
 class FCDataset(Dataset):
-    def __init__(self, file_path, transform=None, seed=0):
-        np.random.seed(seed)
-
+    def __init__(self, file_path, transform=None):
         self.transform = transform
-        self.seed = seed
 
         # preprocess data
         data = np.load(file_path)
@@ -34,7 +31,7 @@ class FCDataset(Dataset):
         self.data = torch.from_numpy(self.data).to(torch.float32)
 
     def __len__(self):
-        return self.data.shape[0]
+        return len(self.data)
     
     def __getitem__(self, idx):
         obj = self.data[idx]
@@ -43,9 +40,11 @@ class FCDataset(Dataset):
         return obj
     
 def make_heatmap():
+    np.random.seed(0)
+
     # extracting the data
-    script_dir = os.path.dirname(__file__)
-    dataset = FCDataset(os.path.join(script_dir, '../../contest-data.npy'))
+    file_dir = os.path.dirname(__file__)
+    dataset = FCDataset(os.path.join(file_dir, '../../contest-data.npy'))
     dataloader = DataLoader(dataset, batch_size=20)
 
     # making plots
@@ -59,11 +58,14 @@ def make_heatmap():
                 matrix[j, i] = matrix[i, j]
                 vec_idx += 1
 
+        if not os.path.exists(os.path.join(file_dir, '../heatmaps')):
+            os.makedirs(os.path.join(file_dir, '../heatmaps'))
+
         fig, ax = plt.subplots()
         im = ax.imshow(matrix)
         ax.set_title(f'Pearsons correlation coefficient of object {idx}')
         cbar = ax.figure.colorbar(im)
-        plt.savefig(os.path.join(script_dir, f'../heatmaps/corr-matrix-{idx}.png'))
+        plt.savefig(os.path.join(file_dir, f'../heatmaps/corr-matrix-{idx}.png'))
         plt.close()
 
 if __name__ == '__main__':

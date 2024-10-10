@@ -1,14 +1,15 @@
-seed: 444
-architecture:
-  hid1_dim: 1000
-  hid2_dim: 1000
-  out_dim: 10
-  p: 0.5
-optimizer:
-  lr: 0.001
-  beta1: 0.9
-  beta2: 0.999
-  eps: 0.00000001
-  weight_decay: 0.0000001
-  num_epochs: 1
+autoencoder:
+  seed: 444
+  architecture:
+    hid1_dim: 1000
+    hid2_dim: 1000
+    out_dim: 10
+    drop_prob: 0.5
+  optimizer:
+    lr: 0.001
+    beta1: 0.9
+    beta2: 0.999
+    eps: 0.00000001
+    weight_decay: 0.0000001
+  num_epochs: 2
 

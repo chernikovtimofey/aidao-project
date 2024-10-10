@@ -5,17 +5,7 @@ stages:
     - src/FCDataset.py
     - src/autoencoder.py
     params:
-    - architecture.hid1_dim
-    - architecture.hid2_dim
-    - architecture.out_dim
-    - architecture.p
-    - optimizer.beta1
-    - optimizer.beta2
-    - optimizer.eps
-    - optimizer.lr
-    - optimizer.num_epochs
-    - optimizer.weight_decay
-    - seed
+    - autoencoder
     outs:
     - encoded_data.npy
   clusterizer:
@@ -23,6 +13,8 @@ stages:
     deps:
     - encoded_data.npy
     - src/clusterizer.py
+    params:
+    - autoencoder.seed
     outs:
     - submission.csv
 
@@ -31,7 +23,7 @@ artifacts:
     path: model.pd
     type: model
 plots:
-- plots/metrics.csv:
+- plots/loss.csv:
     x: step
     y: [train_loss, test_loss]
 metrics:

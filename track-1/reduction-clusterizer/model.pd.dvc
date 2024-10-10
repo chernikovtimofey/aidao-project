@@ -1,9 +1,5 @@
 outs:
-- md5: 3b5900c5a2a5aea20565ce29a7e5aa56
-  size: 251269842
+- md5: b3b01848d8bf555df6b48a00649f611b
+  size: 251304352
   hash: md5
   path: model.pd
-  cloud:
-    my_storage:
-      etag: a279ea940b1653ae7cce82e4d5f3cb3b-5
-      version_id: 0006240DBBAC9647

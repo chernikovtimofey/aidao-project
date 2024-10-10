@@ -15,19 +15,15 @@ def weight_init(m):
         torch.nn.init.zeros_(m.bias)
 
 class Encoder(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, drop_prob=0.5):
+    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Linear(inp_dim, hid1_dim),
+            nn.Linear(inp_dim, hid_dim),
             nn.ReLU(),
             nn.LazyBatchNorm1d(),
             nn.Dropout(drop_prob),
-            nn.Linear(hid1_dim, hid2_dim),
-            nn.ReLU(),
-            nn.LazyBatchNorm1d(),
-            nn.Dropout(drop_prob),
-            nn.Linear(hid2_dim, out_dim)
+            nn.Linear(hid_dim, out_dim)
         )
         self.encoder.apply(weight_init)
 
@@ -35,17 +31,15 @@ class Encoder(nn.Module):
         return self.encoder(x)
     
 class Decoder(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, drop_prob=0.5):
+    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
         super().__init__()
 
         self.decoder = nn.Sequential(
-            nn.Linear(out_dim, hid2_dim),
+            nn.Linear(out_dim, hid_dim),
             nn.Dropout(drop_prob),
+            nn.LazyBatchNorm1d(),
             nn.ReLU(),
-            nn.Linear(hid2_dim, hid1_dim),
-            nn.Dropout(drop_prob),
-            nn.ReLU(),
-            nn.Linear(hid1_dim, inp_dim)
+            nn.Linear(hid_dim, inp_dim),
         )
         self.decoder.apply(weight_init)
 
@@ -53,10 +47,10 @@ class Decoder(nn.Module):
         return self.decoder(x)
     
 class AE(nn.Module):
-    def __init__(self, inp_dim, hid1_dim, hid2_dim, out_dim, drop_prob=0.5):
+    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
         super().__init__()
-        self.encoder = Encoder(inp_dim, hid1_dim, hid2_dim, out_dim, drop_prob)
-        self.decoder = Decoder(inp_dim, hid1_dim, hid2_dim, out_dim, drop_prob)
+        self.encoder = Encoder(inp_dim, hid_dim, out_dim, drop_prob)
+        self.decoder = Decoder(inp_dim, hid_dim, out_dim, drop_prob)
 
     def forward(self, x):
         return self.decoder(self.encoder(x))

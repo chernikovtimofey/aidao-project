@@ -9,36 +9,35 @@ stages:
       size: 2312
     - path: src/autoencoder.py
       hash: md5
-      md5: 3ef996ff1adc46268419382b5d7fec12
-      size: 4499
+      md5: f67e163b3c9b55a12d6abd182d1c2778
+      size: 4239
     params:
       params.yaml:
         autoencoder:
           seed: 444
           architecture:
-            hid1_dim: 1000
-            hid2_dim: 1000
-            out_dim: 10
+            hid_dim: 300
+            out_dim: 25
             drop_prob: 0.5
           optimizer:
             lr: 0.001
             beta1: 0.9
             beta2: 0.999
             eps: 1e-08
-            weight_decay: 1e-07
-          num_epochs: 2
+            weight_decay: 1e-06
+          num_epochs: 100
     outs:
     - path: encoded_data.npy
       hash: md5
-      md5: 42d6753d1ebb20c5de3e0a4efcd73a8e
-      size: 12928
+      md5: 8d49c3e5d0cbcd82e44befe9c9f967f4
+      size: 32128
   clusterizer:
     cmd: python src/clusterizer.py encoded_data.npy
     deps:
     - path: encoded_data.npy
       hash: md5
-      md5: 42d6753d1ebb20c5de3e0a4efcd73a8e
-      size: 12928
+      md5: 8d49c3e5d0cbcd82e44befe9c9f967f4
+      size: 32128
     - path: src/clusterizer.py
       hash: md5
       md5: cb4c2e04e2646883ec1c5ad42cbc23e9
@@ -49,5 +48,5 @@ stages:
     outs:
     - path: submission.csv
       hash: md5
-      md5: ff826dcd2835b6ea6b6a6b0fb72959b4
+      md5: b76c4b863e7323fdbfb0e215ea384e2f
       size: 811

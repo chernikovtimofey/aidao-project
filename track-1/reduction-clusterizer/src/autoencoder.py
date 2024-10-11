@@ -15,42 +15,64 @@ def weight_init(m):
         torch.nn.init.zeros_(m.bias)
 
 class Encoder(nn.Module):
-    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
+    def __init__(self, inp_dim, layers_params, out_layer_dim):
         super().__init__()
 
-        self.encoder = nn.Sequential(
-            nn.Linear(inp_dim, hid_dim),
-            nn.ReLU(),
-            nn.LazyBatchNorm1d(),
-            nn.Dropout(drop_prob),
-            nn.Linear(hid_dim, out_dim)
-        )
+        self.encoder = nn.Sequential()
+
+        prev_out_dim = inp_dim
+        for layer_count in range(1, len(layers_params) + 1):
+            layer_params = layers_params[f'layer_params{layer_count}']
+
+            self.encoder.append(nn.Linear(prev_out_dim, layer_params['out_dim']))
+            self.encoder.append(nn.ReLU())
+            self.encoder.append(nn.LazyBatchNorm1d())
+            self.encoder.append(nn.Dropout(layer_params['drop_prob']))
+
+            prev_out_dim = layer_params['out_dim']
+        self.encoder.append(nn.Linear(prev_out_dim, out_layer_dim))
+
         self.encoder.apply(weight_init)
 
     def forward(self, x):
         return self.encoder(x)
     
 class Decoder(nn.Module):
-    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
+    def __init__(self, inp_dim, layers_params, out_layer_dim):
         super().__init__()
 
-        self.decoder = nn.Sequential(
-            nn.Linear(out_dim, hid_dim),
-            nn.Dropout(drop_prob),
-            nn.LazyBatchNorm1d(),
-            nn.ReLU(),
-            nn.Linear(hid_dim, inp_dim),
-        )
+        self.decoder = nn.Sequential()
+
+        prev_out_dim = layers_params[f'layer_params{len(layers_params)}']['out_dim']
+        prev_drop_prob = layers_params[f'layer_params{len(layers_params)}']['drop_prob']
+        self.decoder.append(nn.Linear(out_layer_dim, prev_out_dim))
+        for layer_count in range(len(layers_params) - 1, 0, -1):
+            layer_params = layers_params[f'layer_params{layer_count}']
+
+            self.decoder.append(nn.Dropout(prev_drop_prob))
+            self.decoder.append(nn.LazyBatchNorm1d())
+            self.decoder.append(nn.ReLU())
+            self.decoder.append(nn.Linear(prev_out_dim, layer_params['out_dim']))
+
+            prev_out_dim = layer_params['out_dim']
+            prev_drop_prob = layer_params['drop_prob']
+
+        self.decoder.append(nn.Dropout(prev_drop_prob))
+        self.decoder.append(nn.LazyBatchNorm1d())
+        self.decoder.append(nn.ReLU())
+        self.decoder.append(nn.Linear(prev_out_dim, inp_dim))
+
         self.decoder.apply(weight_init)
 
     def forward(self, x):
         return self.decoder(x)
     
 class AE(nn.Module):
-    def __init__(self, inp_dim, hid_dim, out_dim, drop_prob=0.5):
+
+    def __init__(self, inp_dim, layers_params, out_layer_dim):
         super().__init__()
-        self.encoder = Encoder(inp_dim, hid_dim, out_dim, drop_prob)
-        self.decoder = Decoder(inp_dim, hid_dim, out_dim, drop_prob)
+        self.encoder = Encoder(inp_dim, layers_params, out_layer_dim)
+        self.decoder = Decoder(inp_dim, layers_params, out_layer_dim)
 
     def forward(self, x):
         return self.decoder(self.encoder(x))

@@ -1,14 +1,22 @@
 autoencoder:
   seed: 444
   architecture:
-    hid_dim: 300
-    out_dim: 25
-    drop_prob: 0.5
+    layers_params:
+      layer_params1:
+        out_dim: 300
+        drop_prob: 0.4
+      layer_params2:
+        out_dim: 300
+        drop_prob: 0.4
+      layer_params3:
+        out_dim: 300
+        drop_prob: 0.4
+    out_layer_dim: 50
   optimizer:
     lr: 0.001
     beta1: 0.9
     beta2: 0.999
     eps: 0.00000001
     weight_decay: 0.000001
-  num_epochs: 100
+  num_epochs: 1
 

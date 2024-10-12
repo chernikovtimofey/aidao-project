@@ -3,20 +3,20 @@ autoencoder:
   architecture:
     layers_params:
       layer_params1:
-        out_dim: 300
-        drop_prob: 0.4
+        out_dim: 700
+        drop_prob: 0.6
       layer_params2:
-        out_dim: 300
-        drop_prob: 0.4
+        out_dim: 500
+        drop_prob: 0.6
       layer_params3:
         out_dim: 300
-        drop_prob: 0.4
-    out_layer_dim: 50
+        drop_prob: 0.6
+    out_layer_dim: 70
   optimizer:
-    lr: 0.001
+    lr: 0.0005
     beta1: 0.9
     beta2: 0.999
     eps: 0.00000001
-    weight_decay: 0.000001
-  num_epochs: 1
+    weight_decay: 0.0001
+  num_epochs: 10000
 
